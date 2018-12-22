@@ -1,57 +1,33 @@
-global.Buffer = global.Buffer || require('buffer').Buffer; // Required for aws sigv4 signing
-
 import React from 'react';
-import {DrawerNavigator} from 'react-navigation';
-
-import {WithAuth} from './lib/Categories/Auth/Components';
+import {createDrawerNavigator, createAppContainer} from 'react-navigation';
 import Amplify from 'aws-amplify';
-import awsmobile from './src/aws-exports';
-import First from './src/Screens/First';
-import Splash from './src/Screens/Splash';
-import Home from './src/Screens/Home';
+import {withAuthenticator} from 'aws-amplify-react-native';
+import aws_exports from './aws-exports';
+import HomePage from './src/Components/HomePage';
 import SignOut from './src/Components/SignOut';
-import ForgotPassword from './src/Components/ForgotPassword';
+import MarkParkingSpot from './src/Components/MarkParkingSpot';
+import FindParking from './src/Components/FindParking';
 
-Amplify.configure(awsmobile);
+Amplify.configure(aws_exports);
 
-const App = DrawerNavigator({
+
+const App = createDrawerNavigator({
   Home: {
-    screen: props => <Home rootNavigator={props.navigation} {...props.screenProps }/>
+    screen: HomePage
   },
-  ForgotPassword: {
-    screen: (props) => {
-      return <ForgotPassword {...props.screenProps} onCancel={() => props.navigation.navigate('Home')} onSuccess={() => props.navigation.navigate('Home')}/>
-    },
-    navigationOptions: {
-      drawerLabel: 'Change password'
-    }
+  Mark: {
+    screen: MarkParkingSpot
+  },
+  Find: {
+    screen: FindParking
   },
   SignOut: {
-    screen: (props) => {
-      return <SignOut rootNavigator={props.navigation} {...props}/>
-    },
-    navigationOptions: {
-      drawerLabel: 'Sign Out'
-    }
-  },
-  Splash: {
-    screen: props => <Splash navigation={props.navigation} { ...props.screenProps }/>,
-    navigationOptions: {
-      drawerLabel: ' '
-    }
-  },
-  FirstScreen: {
-    screen: props => <First rootNavigator={props.navigation} screenProps={{
-        ...props.screenProps
-      }}/>,
-    navigationOptions: {
-      drawerLabel: ' '
-    }
+    screen: SignOut
   }
-}, {initialRouteName: 'Splash'});
+}, {
+  initialRouteName: 'Find'
+});
 
-const AppContainer = props => <App screenProps={{
-    ...props
-  }}/>;
+const AppContainer = createAppContainer(App);
 
-export default WithAuth(AppContainer);
+export default withAuthenticator(AppContainer);

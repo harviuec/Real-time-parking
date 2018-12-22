@@ -1,12 +1,14 @@
 import React from 'react';
 import {Text} from 'react-native';
+import {Auth} from 'aws-amplify';
 
 export default class SignOut extends React.Component {
   componentDidMount() {
-    const {auth} = this.props.screenProps;
-    auth.signOut();
+    let self = this;
 
-    this.props.rootNavigator.navigate('FirstScreen');
+    Auth.signOut().then(() => {
+      self.props.navigation.navigate('Home')
+    });
   }
 
   render() {
